@@ -1,0 +1,8 @@
+{
+  "name": "fear",
+  "version": "0.0.0",
+  "description": "A parser for twig templates",
+  "keywords": [],
+  "author": "Nils Haberkamp",
+  "license": "MIT"
+}
