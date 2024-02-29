@@ -4,5 +4,8 @@
   "description": "A parser for twig templates",
   "keywords": [],
   "author": "Nils Haberkamp",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
 }
