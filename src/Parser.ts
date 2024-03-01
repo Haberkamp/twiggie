@@ -16,14 +16,14 @@ export class Parser {
     return this.Program();
   }
 
-  Program() {
+  private Program() {
     return {
       type: "Program",
       body: this.TagList(),
     };
   }
 
-  TagList(options: { stopAt: string } | undefined = undefined) {
+  private TagList(options: { stopAt: string } | undefined = undefined) {
     const tags = [];
 
     while (this.lookahead !== null && this.lookahead.type !== options?.stopAt) {
@@ -33,11 +33,11 @@ export class Parser {
     return tags;
   }
 
-  Tag() {
+  private Tag() {
     return this.TwigBlock();
   }
 
-  TwigBlock(): { type: string; name: string; body: any[] } {
+  private TwigBlock(): { type: string; name: string; body: any[] } {
     const token = this.eat("TWIG_START_BLOCK");
 
     const body =
