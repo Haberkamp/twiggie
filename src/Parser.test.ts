@@ -32,6 +32,7 @@ test("returns a single Twig block", () => {
       {
         type: "TwigBlock",
         name: "my_block",
+        body: [],
       },
     ],
   });
@@ -55,10 +56,43 @@ test("returns an AST containing adjacent Twig Blocks", () => {
       {
         type: "TwigBlock",
         name: "my_first_block",
+        body: [],
       },
       {
         type: "TwigBlock",
         name: "my_second_block",
+        body: [],
+      },
+    ],
+  });
+});
+
+test("parse nested Twig blocks", () => {
+  // GIVEN
+  const program = `
+{% block my_parent_block %}
+  {% block my_child_block %}{% endblock %}
+{% endblock %}`;
+
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "TwigBlock",
+        name: "my_parent_block",
+        body: [
+          {
+            type: "TwigBlock",
+            name: "my_child_block",
+            body: [],
+          },
+        ],
       },
     ],
   });

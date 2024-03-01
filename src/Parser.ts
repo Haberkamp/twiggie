@@ -23,12 +23,11 @@ export class Parser {
     };
   }
 
-  TagList() {
+  TagList(options: { stopAt: string } | undefined = undefined) {
     const tags = [];
 
-    while (this.lookahead !== null) {
-      const result = this.Tag();
-      tags.push(result);
+    while (this.lookahead !== null && this.lookahead.type !== options?.stopAt) {
+      tags.push(this.Tag());
     }
 
     return tags;
@@ -41,11 +40,17 @@ export class Parser {
   TwigBlock() {
     const token = this.eat("TWIG_START_BLOCK");
 
+    const body =
+      this.lookahead?.type !== "TWIG_END_BLOCK"
+        ? this.TagList({ stopAt: "TWIG_END_BLOCK" })
+        : [];
+
     this.eat("TWIG_END_BLOCK");
 
     return {
       type: "TwigBlock",
       name: token.value.split(" ")[2],
+      body,
     };
   }
 
