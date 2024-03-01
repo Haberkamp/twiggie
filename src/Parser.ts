@@ -37,7 +37,7 @@ export class Parser {
     return this.TwigBlock();
   }
 
-  TwigBlock() {
+  TwigBlock(): { type: string; name: string; body: any[] } {
     const token = this.eat("TWIG_START_BLOCK");
 
     const body =
@@ -49,6 +49,7 @@ export class Parser {
 
     return {
       type: "TwigBlock",
+      // @ts-expect-error - The regex in the tokenizer makes sure that the Twig block has a name
       name: token.value.split(" ")[2],
       body,
     };
