@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "A parser for twig templates",
   "keywords": [],
+  "scripts": {
+    "test": "vitest"
+  },
   "author": "Nils Haberkamp",
   "license": "MIT",
   "devDependencies": {
