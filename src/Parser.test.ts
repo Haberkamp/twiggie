@@ -205,3 +205,32 @@ test("parses an HTML tag inside a Twig block", () => {
     ],
   });
 });
+
+test("parses HTML tag adjacent to Twig block", () => {
+  // GIVEN
+  const program = `
+<div></div>
+{% block my_adjacent_block %}{% endblock %}`;
+
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "div",
+        body: [],
+      },
+      {
+        type: "TwigBlock",
+        name: "my_adjacent_block",
+        body: [],
+      },
+    ],
+  });
+});
