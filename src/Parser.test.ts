@@ -234,3 +234,24 @@ test("parses HTML tag adjacent to Twig block", () => {
     ],
   });
 });
+
+test("parses self-closing HTML tag", () => {
+  // GIVEN
+  const program = "<input />";
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "input",
+        body: [],
+      },
+    ],
+  });
+});
