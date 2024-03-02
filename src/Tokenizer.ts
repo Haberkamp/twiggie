@@ -7,7 +7,11 @@ const spec: Array<[RegExp, null | string]> = [
   [/^{% block \w+ %}/, "TWIG_START_BLOCK"],
   [/^{% endblock %}/, "TWIG_END_BLOCK"],
 
-  // 3. Literal values
+  // 3. HTML syntax
+  [/^<\w+>/, "HTML_OPENING_TAG"],
+  [/^<\/\w+>/, "HTML_CLOSING_TAG"],
+
+  // 4. Literal values
   [/^\S+/, "LITERAL"],
 ];
 

@@ -34,7 +34,22 @@ export class Parser {
   }
 
   private Tag() {
+    const token = this.lookahead;
+    // TODO: add autocompletion for .type property
+    if (token?.type === "HTML_OPENING_TAG") return this.HTMLTag();
+
     return this.TwigBlock();
+  }
+
+  private HTMLTag() {
+    const token = this.eat("HTML_OPENING_TAG");
+
+    this.eat("HTML_CLOSING_TAG");
+
+    return {
+      type: "HTMLTag",
+      name: token.value.slice(1, -1),
+    };
   }
 
   private TwigBlock(): { type: string; name: string; body: any[] } {

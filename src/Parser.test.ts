@@ -97,3 +97,23 @@ test("parse nested Twig blocks", () => {
     ],
   });
 });
+
+test("parses an HTML tag", () => {
+  // GIVEN
+  const program = "<div></div>";
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "div",
+      },
+    ],
+  });
+});
