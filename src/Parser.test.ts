@@ -174,3 +174,34 @@ test("parses nested HTML tags", () => {
     ],
   });
 });
+
+test("parses an HTML tag inside a Twig block", () => {
+  // GIVEN
+  const program = `
+{% block my_block %}
+  <div></div>
+{% endblock %}`;
+
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "TwigBlock",
+        name: "my_block",
+        body: [
+          {
+            type: "HTMLTag",
+            name: "div",
+            body: [],
+          },
+        ],
+      },
+    ],
+  });
+});
