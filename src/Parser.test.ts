@@ -113,6 +113,7 @@ test("parses an HTML tag", () => {
       {
         type: "HTMLTag",
         name: "div",
+        body: [],
       },
     ],
   });
@@ -136,10 +137,39 @@ test("parses adjacent HTML tags", () => {
       {
         type: "HTMLTag",
         name: "div",
+        body: [],
       },
       {
         type: "HTMLTag",
         name: "div",
+        body: [],
+      },
+    ],
+  });
+});
+
+test("parses nested HTML tags", () => {
+  // GIVEN
+  const program = "<div><div></div></div>";
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "div",
+        body: [
+          {
+            type: "HTMLTag",
+            name: "div",
+            body: [],
+          },
+        ],
       },
     ],
   });

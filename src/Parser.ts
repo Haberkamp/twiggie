@@ -41,14 +41,22 @@ export class Parser {
     return this.TwigBlock();
   }
 
-  private HTMLTag() {
+  private HTMLTag(): { type: string; name: string; body: any[] } {
     const token = this.eat("HTML_OPENING_TAG");
+
+    const body =
+      // TODO: I think the lookahead is always defined so we don't
+      //  need the optional chaining operator
+      this.lookahead?.type !== "HTML_CLOSING_TAG"
+        ? this.TagList({ stopAt: "HTML_CLOSING_TAG" })
+        : [];
 
     this.eat("HTML_CLOSING_TAG");
 
     return {
       type: "HTMLTag",
       name: token.value.slice(1, -1),
+      body,
     };
   }
 
