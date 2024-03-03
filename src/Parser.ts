@@ -1,5 +1,4 @@
 import { type Token, Tokenizer } from "@/Tokenizer";
-import { aT } from "vitest/dist/reporters-MmQN-57K.js";
 
 export class Parser {
   private lookahead: Token | null = null;
