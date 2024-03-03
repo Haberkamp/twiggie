@@ -90,9 +90,20 @@ export class Parser {
   }
 
   private HTMLAttribute(rawAttribute: string) {
+    const hasValue = rawAttribute.includes("=");
+    const name = hasValue ? rawAttribute.split("=")[0] : rawAttribute;
+
+    if (hasValue) {
+      return {
+        type: "HTMLAttribute",
+        name,
+        value: rawAttribute.split("=")[1]!.slice(1, -1),
+      };
+    }
+
     return {
       type: "HTMLAttribute",
-      name: rawAttribute,
+      name,
     };
   }
 

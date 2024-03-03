@@ -159,3 +159,31 @@ test("parses HTML tag with an attribute", () => {
     ],
   });
 });
+
+test("parses HTML attribute with a value", () => {
+  // GIVEN
+  const program = '<div class="my-class"></div>';
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "div",
+        attributes: [
+          {
+            type: "HTMLAttribute",
+            name: "class",
+            value: "my-class",
+          },
+        ],
+        body: [],
+      },
+    ],
+  });
+});
