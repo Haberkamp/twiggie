@@ -42,19 +42,38 @@ export class Parser {
     return this.TwigBlock();
   }
 
-  private HTMLTag(): { type: string; name: string; body: any[] } {
+  private HTMLTag(): {
+    type: string;
+    name: string;
+    body: any[];
+    attributes: ReturnType<Parser["HTMLAttribute"]>[];
+  } {
     const isSelfClosingTag = this.lookahead?.type === "HTML_SELF_CLOSING_TAG";
     if (isSelfClosingTag) {
       const token = this.eat("HTML_SELF_CLOSING_TAG");
 
+      const name = /\w+/.exec(token.value)![0];
+      const attributes = token.value
+        .slice(1 + name.length, -2)
+        .trim()
+        .split(/(?:(?<=["'])\s+|\s+(?=["'])|^|$)/)
+        .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
+
       return {
         type: "HTMLTag",
         name: /\w+/.exec(token.value)![0],
+        attributes,
         body: [],
       };
     }
 
     const token = this.eat("HTML_OPENING_TAG");
+    const name = /\w+/.exec(token.value)![0];
+    const attributes = token.value
+      .slice(1 + name.length, -1)
+      .trim()
+      .split(/(?:(?<=["'])\s+|\s+(?=["'])|^|$)/)
+      .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
 
     const body =
       // TODO: I think the lookahead is always defined so we don't
@@ -67,8 +86,27 @@ export class Parser {
 
     return {
       type: "HTMLTag",
-      name: token.value.slice(1, -1),
+      name,
+      attributes,
       body,
+    };
+  }
+
+  private HTMLAttribute(rawAttribute: string) {
+    const hasValue = rawAttribute.includes("=");
+    const name = hasValue ? rawAttribute.split("=")[0] : rawAttribute;
+
+    if (hasValue) {
+      return {
+        type: "HTMLAttribute",
+        name,
+        value: rawAttribute.split("=")[1]!.slice(1, -1),
+      };
+    }
+
+    return {
+      type: "HTMLAttribute",
+      name,
     };
   }
 

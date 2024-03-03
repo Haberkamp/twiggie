@@ -8,9 +8,9 @@ const spec: Array<[RegExp, null | string]> = [
   [/^{% endblock %}/, "TWIG_END_BLOCK"],
 
   // 3. HTML syntax
-  [/^<\w+>/, "HTML_OPENING_TAG"],
+  [/^<\w+\s*([\w\-="\w]+\s*)*\s*>/, "HTML_OPENING_TAG"],
   [/^<\/\w+>/, "HTML_CLOSING_TAG"],
-  [/^<\w+\s*\/>/, "HTML_SELF_CLOSING_TAG"],
+  [/^<\w+\s*([\w\-="\w]+\s*)*\s*\s\/>/, "HTML_SELF_CLOSING_TAG"],
 
   // 4. Literal values
   [/^\S+/, "LITERAL"],

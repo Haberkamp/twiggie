@@ -26,6 +26,7 @@ test("parses an HTML tag inside a Twig block", () => {
             type: "HTMLTag",
             name: "div",
             body: [],
+            attributes: [],
           },
         ],
       },
@@ -52,6 +53,7 @@ test("parses HTML tag adjacent to Twig block", () => {
         type: "HTMLTag",
         name: "div",
         body: [],
+        attributes: [],
       },
       {
         type: "TwigBlock",
