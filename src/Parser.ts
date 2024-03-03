@@ -16,18 +16,33 @@ export class Parser {
   private Program() {
     return {
       type: "Program",
-      body: this.TagList(),
+      body: this.NodeList(),
     };
   }
 
-  private TagList(options: { stopAt: string } | undefined = undefined) {
-    const tags = [];
+  private NodeList(options: { stopAt: string } | undefined = undefined) {
+    const nodes = [];
 
     while (this.lookahead !== null && this.lookahead.type !== options?.stopAt) {
-      tags.push(this.Tag());
+      switch (this.lookahead.type) {
+        case "TEXT":
+          nodes.push(this.Text());
+          break;
+        default:
+          nodes.push(this.Tag());
+      }
     }
 
-    return tags;
+    return nodes;
+  }
+
+  private Text() {
+    const { value } = this.eat("TEXT");
+
+    return {
+      type: "Text",
+      value,
+    };
   }
 
   private Tag() {
@@ -79,7 +94,7 @@ export class Parser {
       // TODO: I think the lookahead is always defined so we don't
       //  need the optional chaining operator
       this.lookahead?.type !== "HTML_CLOSING_TAG"
-        ? this.TagList({ stopAt: "HTML_CLOSING_TAG" })
+        ? this.NodeList({ stopAt: "HTML_CLOSING_TAG" })
         : [];
 
     this.eat("HTML_CLOSING_TAG");
@@ -115,7 +130,7 @@ export class Parser {
 
     const body =
       this.lookahead?.type !== "TWIG_END_BLOCK"
-        ? this.TagList({ stopAt: "TWIG_END_BLOCK" })
+        ? this.NodeList({ stopAt: "TWIG_END_BLOCK" })
         : [];
 
     this.eat("TWIG_END_BLOCK");

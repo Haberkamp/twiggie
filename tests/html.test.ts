@@ -224,3 +224,30 @@ test("parse HTML tag with multiple attributes", () => {
     ],
   });
 });
+
+test("parse text inside an HTML tag", () => {
+  // GIVEN
+  const program = "<p>Hello, world!</p>";
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "p",
+        attributes: [],
+        body: [
+          {
+            type: "Text",
+            value: "Hello, world!",
+          },
+        ],
+      },
+    ],
+  });
+});
