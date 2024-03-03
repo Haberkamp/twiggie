@@ -1,14 +1,11 @@
 import { type Token, Tokenizer } from "@/Tokenizer";
 
 export class Parser {
-  private string: string = "";
-
   private lookahead: Token | null = null;
 
   constructor(private tokenizer: Tokenizer) {}
 
   parse(program: string) {
-    this.string = program;
     this.tokenizer.init(program);
 
     this.lookahead = this.tokenizer.getNextToken();
