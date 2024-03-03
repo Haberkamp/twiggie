@@ -106,7 +106,7 @@ test("parses self-closing HTML tag", () => {
   });
 });
 
-test("parses HTML tag with an attribute", () => {
+test("parses self-closing HTML tag with an attribute", () => {
   // GIVEN
   const program = "<input disabled />";
   const subject = new Parser(new Tokenizer());
@@ -125,6 +125,33 @@ test("parses HTML tag with an attribute", () => {
           {
             type: "HTMLAttribute",
             name: "disabled",
+          },
+        ],
+        body: [],
+      },
+    ],
+  });
+});
+
+test("parses HTML tag with an attribute", () => {
+  // GIVEN
+  const program = "<div hidden></div>";
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "div",
+        attributes: [
+          {
+            type: "HTMLAttribute",
+            name: "hidden",
           },
         ],
         body: [],

@@ -56,7 +56,7 @@ export class Parser {
       const name = /\w+/.exec(token.value)![0];
       const attributes = [token.value.slice(1 + name.length, -2).trim()]
         .filter((attribute) => Boolean(attribute))
-        .map((attribute) => this.HTMLAttribute());
+        .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
 
       return {
         type: "HTMLTag",
@@ -67,6 +67,10 @@ export class Parser {
     }
 
     const token = this.eat("HTML_OPENING_TAG");
+    const name = /\w+/.exec(token.value)![0];
+    const attributes = [token.value.slice(1 + name.length, -1).trim()]
+      .filter((attribute) => Boolean(attribute))
+      .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
 
     const body =
       // TODO: I think the lookahead is always defined so we don't
@@ -79,16 +83,16 @@ export class Parser {
 
     return {
       type: "HTMLTag",
-      name: token.value.slice(1, -1),
-      attributes: [],
+      name,
+      attributes,
       body,
     };
   }
 
-  private HTMLAttribute() {
+  private HTMLAttribute(rawAttribute: string) {
     return {
       type: "HTMLAttribute",
-      name: "disabled",
+      name: rawAttribute,
     };
   }
 
