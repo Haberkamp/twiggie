@@ -2,7 +2,7 @@ import { test, expect } from "vitest";
 import { Parser } from "@/Parser";
 import { Tokenizer } from "@/Tokenizer";
 
-test("returns an empty Program", () => {
+test("parses an empty file", () => {
   // GIVEN
   const program = "";
   const subject = new Parser(new Tokenizer());
