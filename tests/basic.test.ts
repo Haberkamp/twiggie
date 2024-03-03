@@ -17,6 +17,26 @@ test("parses an empty file", () => {
   });
 });
 
+test("parses a file with raw text", () => {
+  // GIVEN
+  const program = "Hello, world!";
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "Text",
+        value: "Hello, world!",
+      },
+    ],
+  });
+});
+
 test("ignores the <!DOCTYPE> tag", () => {
   // GIVEN
   const program = "<!DOCTYPE html>";
