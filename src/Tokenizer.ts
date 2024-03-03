@@ -10,7 +10,7 @@ const spec: Array<[RegExp, null | string]> = [
   // 3. HTML syntax
   [/^<\w+>/, "HTML_OPENING_TAG"],
   [/^<\/\w+>/, "HTML_CLOSING_TAG"],
-  [/^<\w+\s*\/>/, "HTML_SELF_CLOSING_TAG"],
+  [/^<\w+\s*([\w-]+\s*)*\s*\/>/, "HTML_SELF_CLOSING_TAG"],
 
   // 4. Literal values
   [/^\S+/, "LITERAL"],

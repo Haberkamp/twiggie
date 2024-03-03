@@ -18,6 +18,7 @@ test("parses an HTML tag", () => {
         type: "HTMLTag",
         name: "div",
         body: [],
+        attributes: [],
       },
     ],
   });
@@ -42,11 +43,13 @@ test("parses adjacent HTML tags", () => {
         type: "HTMLTag",
         name: "div",
         body: [],
+        attributes: [],
       },
       {
         type: "HTMLTag",
         name: "div",
         body: [],
+        attributes: [],
       },
     ],
   });
@@ -67,11 +70,13 @@ test("parses nested HTML tags", () => {
       {
         type: "HTMLTag",
         name: "div",
+        attributes: [],
         body: [
           {
             type: "HTMLTag",
             name: "div",
             body: [],
+            attributes: [],
           },
         ],
       },
@@ -94,6 +99,34 @@ test("parses self-closing HTML tag", () => {
       {
         type: "HTMLTag",
         name: "input",
+        body: [],
+        attributes: [],
+      },
+    ],
+  });
+});
+
+test("parses HTML tag with an attribute", () => {
+  // GIVEN
+  const program = "<input disabled />";
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "input",
+        attributes: [
+          {
+            type: "HTMLAttribute",
+            name: "disabled",
+          },
+        ],
         body: [],
       },
     ],

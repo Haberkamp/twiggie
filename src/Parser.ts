@@ -1,4 +1,5 @@
 import { type Token, Tokenizer } from "@/Tokenizer";
+import { aT } from "vitest/dist/reporters-MmQN-57K.js";
 
 export class Parser {
   private lookahead: Token | null = null;
@@ -42,14 +43,25 @@ export class Parser {
     return this.TwigBlock();
   }
 
-  private HTMLTag(): { type: string; name: string; body: any[] } {
+  private HTMLTag(): {
+    type: string;
+    name: string;
+    body: any[];
+    attributes: ReturnType<Parser["HTMLAttribute"]>[];
+  } {
     const isSelfClosingTag = this.lookahead?.type === "HTML_SELF_CLOSING_TAG";
     if (isSelfClosingTag) {
       const token = this.eat("HTML_SELF_CLOSING_TAG");
 
+      const name = /\w+/.exec(token.value)![0];
+      const attributes = [token.value.slice(1 + name.length, -2).trim()]
+        .filter((attribute) => Boolean(attribute))
+        .map((attribute) => this.HTMLAttribute());
+
       return {
         type: "HTMLTag",
         name: /\w+/.exec(token.value)![0],
+        attributes,
         body: [],
       };
     }
@@ -68,7 +80,15 @@ export class Parser {
     return {
       type: "HTMLTag",
       name: token.value.slice(1, -1),
+      attributes: [],
       body,
+    };
+  }
+
+  private HTMLAttribute() {
+    return {
+      type: "HTMLAttribute",
+      name: "disabled",
     };
   }
 
