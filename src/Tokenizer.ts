@@ -2,6 +2,7 @@ const spec: Array<[RegExp, null | string]> = [
   // 1. Stuff we ignore
   [/^\s+/, null],
   [/^<!--.*-->/, null],
+  [/^<!DOCTYPE html>/, null],
 
   // 2. Twig Syntax
   [/^{% block \w+ %}/, "TWIG_START_BLOCK"],
