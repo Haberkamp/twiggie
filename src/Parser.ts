@@ -1,4 +1,4 @@
-import { type Token, Tokenizer } from "./Tokenizer";
+import { type Token, Tokenizer } from "@/Tokenizer";
 
 export class Parser {
   private string: string = "";
