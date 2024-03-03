@@ -187,3 +187,40 @@ test("parses HTML attribute with a value", () => {
     ],
   });
 });
+
+test("parse HTML tag with multiple attributes", () => {
+  // GIVEN
+  const program = '<button class="my-class" id="my-id" disabled></button>';
+  const subject = new Parser(new Tokenizer());
+
+  // WHEN
+  const result = subject.parse(program);
+
+  // THEN
+  expect(result).toStrictEqual({
+    type: "Program",
+    body: [
+      {
+        type: "HTMLTag",
+        name: "button",
+        attributes: [
+          {
+            type: "HTMLAttribute",
+            name: "class",
+            value: "my-class",
+          },
+          {
+            type: "HTMLAttribute",
+            name: "id",
+            value: "my-id",
+          },
+          {
+            type: "HTMLAttribute",
+            name: "disabled",
+          },
+        ],
+        body: [],
+      },
+    ],
+  });
+});

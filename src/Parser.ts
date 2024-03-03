@@ -53,8 +53,10 @@ export class Parser {
       const token = this.eat("HTML_SELF_CLOSING_TAG");
 
       const name = /\w+/.exec(token.value)![0];
-      const attributes = [token.value.slice(1 + name.length, -2).trim()]
-        .filter((attribute) => Boolean(attribute))
+      const attributes = token.value
+        .slice(1 + name.length, -2)
+        .trim()
+        .split(/(?:(?<=["'])\s+|\s+(?=["'])|^|$)/)
         .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
 
       return {
@@ -67,8 +69,10 @@ export class Parser {
 
     const token = this.eat("HTML_OPENING_TAG");
     const name = /\w+/.exec(token.value)![0];
-    const attributes = [token.value.slice(1 + name.length, -1).trim()]
-      .filter((attribute) => Boolean(attribute))
+    const attributes = token.value
+      .slice(1 + name.length, -1)
+      .trim()
+      .split(/(?:(?<=["'])\s+|\s+(?=["'])|^|$)/)
       .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
 
     const body =
