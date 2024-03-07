@@ -14,7 +14,7 @@ const spec: Array<[RegExp, null | string]> = [
   [/^<\w+\s*([\w\-="\w]+\s*)*\s*\s\/>/, "HTML_SELF_CLOSING_TAG"],
 
   // 4. Literal values
-  [/^[\d\w\s\!\?\=\_\,]+\b(!|\?)*/, "TEXT"],
+  [/^[\d\w\s\!\?\=\_\,"\=]+\b(!|\?|")*/, "TEXT"],
 ];
 
 export type Token = {
