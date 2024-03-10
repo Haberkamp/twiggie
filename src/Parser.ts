@@ -20,13 +20,21 @@ export class Parser {
     };
   }
 
-  private NodeList(options: { stopAt: string } | undefined = undefined) {
+  private NodeList(
+    options: { stopAt: string | string[] } | undefined = undefined,
+  ) {
     const nodes = [];
+    const stopAt = Array.isArray(options?.stopAt)
+      ? options.stopAt
+      : [options?.stopAt];
 
-    while (this.lookahead !== null && this.lookahead.type !== options?.stopAt) {
+    while (this.lookahead !== null && !stopAt.includes(this.lookahead.type)) {
       switch (this.lookahead.type) {
         case "TEXT":
           nodes.push(this.Text());
+          break;
+        case "HTML_ATTRIBUTE":
+          nodes.push(this.HTMLAttribute());
           break;
         default:
           nodes.push(this.Tag());
@@ -48,11 +56,7 @@ export class Parser {
   private Tag() {
     const token = this.lookahead;
     // TODO: add autocompletion for .type property
-    if (
-      token?.type === "HTML_OPENING_TAG" ||
-      token?.type === "HTML_SELF_CLOSING_TAG"
-    )
-      return this.HTMLTag();
+    if (token?.type === "START_OF_HTML_OPENING_TAG") return this.HTMLTag();
 
     return this.TwigBlock();
   }
@@ -63,41 +67,42 @@ export class Parser {
     body: any[];
     attributes: ReturnType<Parser["HTMLAttribute"]>[];
   } {
-    const isSelfClosingTag = this.lookahead?.type === "HTML_SELF_CLOSING_TAG";
-    if (isSelfClosingTag) {
-      const token = this.eat("HTML_SELF_CLOSING_TAG");
+    const token = this.eat("START_OF_HTML_OPENING_TAG");
+    const name = token.value.match(/\w+/)![0];
 
-      const name = /\w+/.exec(token.value)![0];
-      const attributes = token.value
-        .slice(1 + name.length, -2)
-        .trim()
-        .split(/(?:(?<=["'])\s+|\s+(?=["'])|^|$)/)
-        .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
+    const hasAttributes = this.lookahead?.type === "HTML_ATTRIBUTE";
+
+    const attributes =
+      // TODO: I think the lookahead is always defined so we don't
+      //  need the optional chaining operator
+      hasAttributes && this.lookahead?.type !== "END_OF_HTML_TAG"
+        ? this.NodeList({
+            stopAt: ["END_OF_HTML_TAG", "END_OF_SELF_CLOSING_HTML_TAG"],
+          })
+        : [];
+
+    const isSelfClosing =
+      this.lookahead?.type === "END_OF_SELF_CLOSING_HTML_TAG";
+    if (isSelfClosing) {
+      this.eat("END_OF_SELF_CLOSING_HTML_TAG");
 
       return {
         type: "HTMLTag",
-        name: /\w+/.exec(token.value)![0],
+        name,
         attributes,
         body: [],
       };
     }
 
-    const token = this.eat("HTML_OPENING_TAG");
-    const name = /\w+/.exec(token.value)![0];
-    const attributes = token.value
-      .slice(1 + name.length, -1)
-      .trim()
-      .split(/(?:(?<=["'])\s+|\s+(?=["'])|^|$)/)
-      .map((rawAttribute) => this.HTMLAttribute(rawAttribute));
+    this.eat("END_OF_HTML_TAG");
 
     const body =
-      // TODO: I think the lookahead is always defined so we don't
-      //  need the optional chaining operator
-      this.lookahead?.type !== "HTML_CLOSING_TAG"
-        ? this.NodeList({ stopAt: "HTML_CLOSING_TAG" })
+      this.lookahead?.type !== "START_OF_HTML_CLOSING_TAG"
+        ? this.NodeList({ stopAt: "START_OF_HTML_CLOSING_TAG" })
         : [];
 
-    this.eat("HTML_CLOSING_TAG");
+    this.eat("START_OF_HTML_CLOSING_TAG");
+    this.eat("END_OF_HTML_TAG");
 
     return {
       type: "HTMLTag",
@@ -107,21 +112,22 @@ export class Parser {
     };
   }
 
-  private HTMLAttribute(rawAttribute: string) {
-    const hasValue = rawAttribute.includes("=");
-    const name = hasValue ? rawAttribute.split("=")[0] : rawAttribute;
+  private HTMLAttribute() {
+    const token = this.eat("HTML_ATTRIBUTE");
 
-    if (hasValue) {
+    const match = /".*"/.exec(token.value)!;
+    const noAttribute = !match;
+    if (noAttribute) {
       return {
         type: "HTMLAttribute",
-        name,
-        value: rawAttribute.split("=")[1]!.slice(1, -1),
+        name: token.value,
       };
     }
 
     return {
       type: "HTMLAttribute",
-      name,
+      name: token.value.split("=")[0],
+      value: match[0].slice(1, -1),
     };
   }
 
