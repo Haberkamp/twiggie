@@ -1,6 +1,6 @@
 {
   "name": "fear",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A parser for twig templates",
   "keywords": [],
   "type": "module",
