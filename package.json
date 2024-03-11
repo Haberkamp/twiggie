@@ -3,7 +3,22 @@
   "version": "0.0.1",
   "description": "A parser for twig templates",
   "keywords": [],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "unbuild",
     "test": "vitest",
     "format:check": "prettier --check --cache .",
     "format": "prettier --write --cache ."
@@ -13,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^20.11.24",
     "prettier": "^3.2.5",
+    "unbuild": "^2.0.0",
     "vitest": "^1.3.1"
   }
 }
