@@ -19,6 +19,10 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           release-type: node
 
+      - name: Checkout
+        if: ${{ steps.release-please.outputs.release_created }}
+        uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v3
         if: ${{ steps.release-please.outputs.release_created }}
         with:
